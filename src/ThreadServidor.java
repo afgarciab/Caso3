@@ -17,7 +17,7 @@ public class ThreadServidor extends Thread {
 
 	public void run()
 	{
-		
+
 		try {
 
 			//se conectan los flujos tanto de salida como de entrada
@@ -27,8 +27,8 @@ public class ThreadServidor extends Thread {
 			//se ejecuta hasta que escriba ok
 			int cont=0;
 			while(cont<3) {
-			ProtocoloServidor.procesar(lector, escritor);
-			cont++;
+				ProtocoloServidor.procesar(lector, escritor);
+				cont++;
 			}
 
 			//se cierran los flujos del socket

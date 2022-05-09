@@ -15,7 +15,7 @@ public class Cliente {
 		BufferedReader lector=null;
 		System.out.println("cliente..");
 		int cont=0;
-		
+
 		try {
 			//se crean el socket en el  lado del cliente
 			socket = new Socket(SERVIDOR,PUERTO);
@@ -27,24 +27,24 @@ public class Cliente {
 			e.printStackTrace();
 			System.exit(-1);	
 		}
-		
+
 		// crear flujo para leer lo que escribe el cliente por el teclado
 		BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 		//ejecuto hasta que escriba adios
-		
+
 		while(cont<3) {
 			//se ejecuta el protocolo en el lado del cliente
 			ProtocoloCliente.procesar(stdIn,lector, escritor);
 			cont++;
 		}
-			//se cierran los flujos y el socket
-			stdIn.close();
-			escritor.close();
-			lector.close();
-			socket.close();
-			
-		
-		
+		//se cierran los flujos y el socket
+		stdIn.close();
+		escritor.close();
+		lector.close();
+		socket.close();
+
+
+
 	}
 
 }

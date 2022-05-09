@@ -5,14 +5,14 @@ import java.io.PrintWriter;
 public class ProtocoloCliente {
 
 	public static void procesar(BufferedReader stdIn, BufferedReader pIn, PrintWriter pOut) throws IOException {
-		
+
 		//lee el teclado
 		System.out.println("escriba el mensaje para enviar");
 		String fromUser = stdIn.readLine();
-		
+
 		//envia por red
 		pOut.println(fromUser);
-		
+
 		String fromServer="";
 		//lee lo que llega por red
 		//si lo que llega del servidor no es null
@@ -21,8 +21,8 @@ public class ProtocoloCliente {
 		{
 			System.out.println("Respuesta del servidor: "+ fromServer);
 		}
-		
-		
+
+
 	}
 
 }

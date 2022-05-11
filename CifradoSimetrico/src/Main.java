@@ -7,40 +7,42 @@ import javax.crypto.SecretKey;
 public class Main {
 
 	private final static String ALGORITMO ="AES";
+
+	
 	
 	/**
 	 * @param args
 	 * @throws NoSuchAlgorithmException 
 	 */
 	public static void main(String[] args) throws NoSuchAlgorithmException {
-		
+
 		System.out.println ("Empezamos el programa");
 
-        System.out.println ("Por favor introduzca una cadena por teclado:");
+		System.out.println ("Por favor introduzca una cadena por teclado:");
 
-        String entradaTeclado = "";
+		String entradaTeclado = "";
 
-        Scanner entradaEscaner = new Scanner(System.in); //Creación de un objeto Scanner
+		Scanner entradaEscaner = new Scanner(System.in); //Creación de un objeto Scanner
 
-        entradaTeclado = entradaEscaner.nextLine (); //Invocamos un método sobre un objeto Scanner
+		entradaTeclado = entradaEscaner.nextLine (); //Invocamos un método sobre un objeto Scanner
 
-        System.out.println ("Entrada recibida por teclado es: \"" + entradaTeclado +"\"");
-        
-        byte[] arregloBytes =entradaTeclado.getBytes();
-        
-        imprimir(arregloBytes);
-        System.out.println("//////////////////////////////////////////////////////////");
-        KeyGenerator keygen = KeyGenerator.getInstance(ALGORITMO);
-        SecretKey secretKey = keygen.generateKey();
-        byte[] arregloBytesCifrado= Simetrico.cifrar(secretKey, entradaTeclado);
-        imprimir(arregloBytesCifrado);
-        System.out.println("//////////////////////////////////////////////////////////");
-        byte[] arregloBytesDeCifrado=Simetrico.descifrar(secretKey, arregloBytesCifrado);
-        imprimir(arregloBytesDeCifrado);
-        
-        System.out.println("texto decifrado: "+ new String(arregloBytesDeCifrado) );
+		System.out.println ("Entrada recibida por teclado es: \"" + entradaTeclado +"\"");
+
+		byte[] arregloBytes =entradaTeclado.getBytes();
+
+		imprimir(arregloBytes);
+		System.out.println("//////////////////////////////////////////////////////////");
+		KeyGenerator keygen = KeyGenerator.getInstance(ALGORITMO);
+		SecretKey secretKey = keygen.generateKey();
+		byte[] arregloBytesCifrado= Simetrico.cifrar(secretKey, entradaTeclado);
+		imprimir(arregloBytesCifrado);
+		System.out.println("//////////////////////////////////////////////////////////");
+		byte[] arregloBytesDeCifrado=Simetrico.descifrar(secretKey, arregloBytesCifrado);
+		imprimir(arregloBytesDeCifrado);
+
+		System.out.println("texto decifrado: "+ new String(arregloBytesDeCifrado) );
 	}
-	
+
 	public static void imprimir(byte[] contenido) {
 		int i=0;
 		for(;i<contenido.length-1;i++)
@@ -49,5 +51,7 @@ public class Main {
 		}
 		System.out.println(contenido[i]+ " ");
 	}
+
+	
 
 }

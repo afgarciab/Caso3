@@ -38,9 +38,9 @@ public class Main3 {
 
 		String entradaTeclado = "";
 
-		Scanner entradaEscaner = new Scanner(System.in); //Creación de un objeto Scanner
+		Scanner entradaEscaner = new Scanner(System.in); //Creaciï¿½n de un objeto Scanner
 
-		entradaTeclado = entradaEscaner.nextLine (); //Invocamos un método sobre un objeto Scanner
+		entradaTeclado = entradaEscaner.nextLine (); //Invocamos un mï¿½todo sobre un objeto Scanner
 
 		System.out.println ("Entrada recibida por teclado es: \"" + entradaTeclado +"\"");
 
@@ -52,17 +52,14 @@ public class Main3 {
 		KeyGenerator keygen = KeyGenerator.getInstance(ALGORITMO);
 		SecretKey secretKey = keygen.generateKey();
 
-		//Genere una llave secreta y guárdela en un archivo
+		//Genere una llave secreta y guï¿½rdela en un archivo
 		FileOutputStream archivo = new FileOutputStream("./data/ejemplo.txt");
 		ObjectOutputStream oos = new ObjectOutputStream(archivo);
 
 		oos.writeObject(secretKey);
 		oos.close();
 
-
-
-
-
+		/*-------------------------------------------------------------------------*/
 
 		byte[] arregloBytesCifrado= Simetrico.cifrar(secretKey, entradaTeclado);
 		imprimir(arregloBytesCifrado);

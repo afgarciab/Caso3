@@ -1,8 +1,10 @@
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.ProtocolException;
 import java.net.ServerSocket;
@@ -12,6 +14,7 @@ import java.security.*;
 import java.security.spec.EncodedKeySpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
+import java.util.Scanner;
 
 import javax.crypto.*;
 
@@ -27,55 +30,17 @@ public class Servidor {
 
 	public static void main(String[] args) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
 
-		//			KeyPairGenerator generator;
-		//	
-		//			//generamos par de llaves en RSA con 256 bits
-		//			generator = KeyPairGenerator.getInstance("RSA");
-		//			generator.initialize(256);
-		//			KeyPair pair = generator.generateKeyPair();
-		//	
-		//			//extraemos la llave privada y publica
-		//			PrivateKey privateKey = pair.getPrivate();
-		//			PublicKey publicKey = pair.getPublic();
-		//	
-		//	
-		//			//almacenar claves en un archivo
-		//			//Para guardar una clave en un archivo, podemos usar el método getEncoded 
-		//			//, que devuelve el contenido de la clave en su formato de codificación principal
-		//			try (FileOutputStream fos = new FileOutputStream("public.key")) {
-		//				fos.write(publicKey.getEncoded());
-		//			}
-		//			//Para leer la clave de un archivo, primero debemos cargar el contenido como una matriz de bytes
-		//			File publicKeyFile = new File("public.key");
-		//			byte[] publicKeyBytes = Files.readAllBytes(publicKeyFile.toPath());
-		//			
-		//			//KeyFactory para recrear la instancia real
-		//			KeyFactory keyFactory = KeyFactory.getInstance("RSA");
-		//			EncodedKeySpec publicKeySpec = new X509EncodedKeySpec(publicKeyBytes);
-		//			keyFactory.generatePublic(publicKeySpec);
-		//	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		int numeroThreads=0;
 		ServerSocket ss=null;
 		boolean continuar = true;
 
 		System.out.println("Main server...");
+
+		PublicKey llavePublica = null;
+		PrivateKey llavePrivada = null;
+		final String ALGORITMO = "RSA";
+
+		getLlavesAsimetricas(llavePublica, llavePrivada, ALGORITMO);
 
 		try {
 			ss= new ServerSocket(PUERTO);
@@ -99,6 +64,50 @@ public class Servidor {
 		ss.close();
 
 
+	}
+
+	public static void getLlavesAsimetricas(PublicKey llavePublica, PrivateKey llavePrivada, String ALGORITMO) {
+		
+		try {
+
+			KeyPairGenerator generator = KeyPairGenerator.getInstance(ALGORITMO);
+			generator.initialize(1024);
+			KeyPair keyPair = generator.generateKeyPair();
+			llavePublica = keyPair.getPublic();
+			llavePrivada = keyPair.getPrivate();
+
+			File publicKFile = new File("./../data/publicK.txt");
+			// Si el archivo no existe es creado
+			if (!publicKFile.exists()) {
+				publicKFile.createNewFile();
+			}
+			FileOutputStream publicK = new FileOutputStream(publicKFile, false);
+			ObjectOutputStream oosPublicK = new ObjectOutputStream(publicK);
+
+			File privateKFile = new File("./../data/privateK.txt");
+			// Si el archivo no existe es creado
+			if (!privateKFile.exists()) {
+				privateKFile.createNewFile();
+			}
+			FileOutputStream privateK = new FileOutputStream(privateKFile, false);
+			ObjectOutputStream oosPrivateK = new ObjectOutputStream(privateK);
+
+			oosPublicK.writeObject(llavePublica);
+			oosPublicK.close();
+
+			oosPrivateK.writeObject(llavePrivada);
+			oosPrivateK.close();
+
+			
+		} catch (FileNotFoundException ex) {
+			System.out
+					.println(ex.getMessage() + " in the specified directory.");
+			System.exit(0);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void GenerarPaquetesBase()
@@ -137,7 +146,7 @@ public class Servidor {
 	}
 	
 	/**
-	 * retorna true o false si el cliente está o no
+	 * retorna true o false si el cliente estï¿½ o no
 	 * @param nombreCliente
 	 * @param idPaquete
 	 * @return
@@ -154,7 +163,7 @@ public class Servidor {
 	}
 	
 	/**
-	 * retorna true o false si el cliente está o no
+	 * retorna true o false si el cliente estï¿½ o no
 	 * @param nombreCliente
 	 * @param idPaquete
 	 * @return
@@ -172,4 +181,39 @@ public class Servidor {
 
 
 
+}
+
+class Asimetrico {
+	public static byte[] cifrar(PublicKey llave, String algoritmo, String texto) {
+	    long tiempoInicial = System.nanoTime();
+		byte[] textoCifrado;
+	    try {
+	        Cipher cifrador = Cipher.getInstance(algoritmo);
+	        byte[] textoClaro = texto.getBytes();
+	        cifrador.init(Cipher.ENCRYPT_MODE, llave);
+	        textoCifrado = cifrador.doFinal(textoClaro);
+			long tiempoFinal = System.nanoTime();
+			System.out.println(tiempoFinal-tiempoInicial);
+	        return textoCifrado;
+	     } catch (Exception e) {
+	        System.out.println("Excepcion: "  + e.getMessage());
+	        return null;
+	    }
+	}
+	
+	public static byte [] descifrar(PrivateKey llave, String algoritmo, byte[] texto) {
+	    long tiempoInicial = System.nanoTime();
+		byte[] textoClaro;
+	    try {
+	        Cipher cifrador = Cipher.getInstance(algoritmo);
+	        cifrador.init(Cipher.DECRYPT_MODE, llave);
+	        textoClaro = cifrador.doFinal(texto);
+	     } catch (Exception e) {
+	        System.out.println("Excepcion: " + e.getMessage());
+	        return null;
+	    }
+		long tiempoFinal = System.nanoTime();
+		System.out.println(tiempoFinal-tiempoInicial);
+	    return textoClaro;
+	}
 }

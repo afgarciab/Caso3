@@ -42,9 +42,26 @@ public class Servidor {
 
 		getLlavesAsimetricas(llavePublica, llavePrivada, ALGORITMO);
 
-	
+		try {
+			ss= new ServerSocket(PUERTO);
+		}catch(IOException e)
+		{
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		while(continuar)
+		{
+			//crea el socket en el lado del servidor
+			//queda bloqueado esperando a que llegue el cliente
+			Socket socket = ss.accept();
 
+			ThreadServidor thread = new ThreadServidor(llavePublica, llavePrivada,socket, numeroThreads);
+			numeroThreads++;
 
+			//start
+			thread.start();
+		}
+		ss.close();
 	}
 
 	public static void getLlavesAsimetricas(PublicKey llavePublica, PrivateKey llavePrivada, String ALGORITMO) {
@@ -64,7 +81,6 @@ public class Servidor {
 			}
 			FileOutputStream publicK = new FileOutputStream(publicKFile, false);
 			ObjectOutputStream oosPublicK = new ObjectOutputStream(publicK);
-			System.out.println("se logró 1");
 			File privateKFile = new File("Servidor/data/privateK.txt");
 			// Si el archivo no existe es creado
 			if (!privateKFile.exists()) {
@@ -72,7 +88,6 @@ public class Servidor {
 			}
 			FileOutputStream privateK = new FileOutputStream(privateKFile, false);
 			ObjectOutputStream oosPrivateK = new ObjectOutputStream(privateK);
-			System.out.println("se logró 2");
 			oosPublicK.writeObject(llavePublica);
 			oosPublicK.close();
 

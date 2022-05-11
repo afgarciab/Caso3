@@ -1,19 +1,24 @@
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.*;
+import java.security.spec.X509EncodedKeySpec;
 
 public class Cliente {
 
 	public static final int PUERTO = 3400;
-	public static final String SERVIDOR= "localhost";
+	public static final String SERVIDOR = "localhost";
 
 	public static void main(String[] args) throws IOException {
 		Socket socket=null;
 		PrintWriter escritor=null;
 		BufferedReader lector=null;
 		System.out.println("cliente..");
+
+		PublicKey llavePublica = null;
+
 		int cont=0;
 		boolean salir=false;
 
@@ -23,10 +28,13 @@ public class Cliente {
 			//se conectan los flujos tanto de salida como de entrada
 			escritor = new PrintWriter(socket.getOutputStream(),true);
 			lector = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			llavePublica = getPublicKey("./data/publicK.txt");
 		}
 		catch(IOException e){
 			e.printStackTrace();
 			System.exit(-1);	
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
 
 		// crear flujo para leer lo que escribe el cliente por el teclado
@@ -58,4 +66,13 @@ public class Cliente {
 
 	}
 
+	public static PublicKey getPublicKey(String filename)
+			throws Exception {
+
+		byte[] keyBytes = Files.readAllBytes(Paths.get(filename));
+
+		X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
+		KeyFactory kf = KeyFactory.getInstance("RSA");
+		return kf.generatePublic(spec);
+	}
 }

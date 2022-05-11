@@ -23,6 +23,7 @@ public class ProtocoloServidor {
 
 		//procesa la entrada
 		outputLine=inputLine;
+		//El cliente pide iniciar la sesión y espera un mensaje de confirmación del servidor (¨ACK¨)
 		if(idProceso==0) {
 			if(inputLine.equals("INICIO"))
 			{
@@ -32,12 +33,16 @@ public class ProtocoloServidor {
 				outputLine="DESCONOCIDO";
 			}
 		}
+		else if(idProceso==1)
+		{
+			
+		}
 
 		//escribe en el flujo de salida
 		pOut.println(outputLine);
 		System.out.println("salida procesada: "+ outputLine);
 	}
-	
-	
+
+
 
 }

@@ -82,21 +82,24 @@ public class Servidor {
 			// Si el archivo no existe es creado
 			if (!publicKFile.exists()) {
 				publicKFile.createNewFile();
+				FileOutputStream publicK = new FileOutputStream(publicKFile, false);
+				ObjectOutputStream oosPublicK = new ObjectOutputStream(publicK);
+				oosPublicK.writeObject(llavePublica);
+				oosPublicK.close();
 			}
-			FileOutputStream publicK = new FileOutputStream(publicKFile, false);
-			ObjectOutputStream oosPublicK = new ObjectOutputStream(publicK);
+			
 			File privateKFile = new File("./data/privateK.txt");
 			// Si el archivo no existe es creado
 			if (!privateKFile.exists()) {
 				privateKFile.createNewFile();
-			}
-			FileOutputStream privateK = new FileOutputStream(privateKFile, false);
-			ObjectOutputStream oosPrivateK = new ObjectOutputStream(privateK);
-			oosPublicK.writeObject(llavePublica);
-			oosPublicK.close();
+				FileOutputStream privateK = new FileOutputStream(privateKFile, false);
+				ObjectOutputStream oosPrivateK = new ObjectOutputStream(privateK);
+				
 
-			oosPrivateK.writeObject(llavePrivada);
-			oosPrivateK.close();
+				oosPrivateK.writeObject(llavePrivada);
+				oosPrivateK.close();
+			}
+			
 
 
 		} catch (FileNotFoundException ex) {

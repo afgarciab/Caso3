@@ -32,15 +32,19 @@ public class ProtocoloServidor {
 			else {
 				outputLine="DESCONOCIDO";
 			}
+			pOut.println(outputLine);
+			System.out.println("salida procesada: "+ outputLine);
 		}
+		//El servidor responde con el reto cifrado con su llave privada.
 		else if(idProceso==1)
 		{
-			
+			outputLine= inputLine;
+			pOut.println(Long.parseLong(inputLine));
+			System.out.println("salida procesada: "+ outputLine);
 		}
 
 		//escribe en el flujo de salida
-		pOut.println(outputLine);
-		System.out.println("salida procesada: "+ outputLine);
+		
 	}
 
 

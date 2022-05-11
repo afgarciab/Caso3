@@ -36,26 +36,23 @@ public class Cliente {
 		while(cont<2&&salir==false) {
 			//se ejecuta el protocolo en el lado del cliente
 
-			//primero verifica verifica para iniciar sesion
-			if (cont==0) {
+
 				String respuesta =ProtocoloCliente.procesar(stdIn,lector, escritor,cont);
 				if(respuesta.equals("DESCONOCIDO"))
 				{
 					salir=true;
 				}
+				cont++;
 
-			}else if (cont==1) {
-				System.out.println("paso2");
 			}
-			cont++;
+			//se cierran los flujos y el socket
+			stdIn.close();
+			escritor.close();
+			lector.close();
+			socket.close();
 
 		}
-		//se cierran los flujos y el socket
-		stdIn.close();
-		escritor.close();
-		lector.close();
-		socket.close();
+
+
 
 	}
-
-}

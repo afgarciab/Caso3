@@ -33,7 +33,7 @@ public class ThreadServidor extends Thread {
 			//se ejecuta el protocolo en el lado del servidor
 			//se ejecuta hasta que escriba ok
 			int cont=0;
-			while(cont<1) {
+			while(cont<2) {
 				if(cont==0)
 				{
 					

@@ -61,11 +61,15 @@ public class Main {
 		
 
 		//Genere una llave secreta y gu�rdela en un archivo
-		try{
-			FileOutputStream publicK = new FileOutputStream("/data/publicK.txt");
+		
+			File publicKFile = new File("./../data/publicK.txt");
+			publicKFile.createNewFile();
+			FileOutputStream publicK = new FileOutputStream(publicKFile, false); 
 			ObjectOutputStream oosPublicK = new ObjectOutputStream(publicK);
 
-			FileOutputStream privateK = new FileOutputStream("/data/privateK.txt");
+			File privateKFile = new File("./../data/privateK.txt");
+			privateKFile.createNewFile();
+			FileOutputStream privateK = new FileOutputStream(privateKFile, false);
 			ObjectOutputStream oosPrivateK = new ObjectOutputStream(privateK);
 
 			oosPublicK.writeObject(llavePublica);
@@ -80,7 +84,7 @@ public class Main {
 			imprimir(arregloBytesCifrado);
 
 			//Cifre un mensaje de entrada. Almacene el texto cifrado en un archivo.
-			publicK = new FileOutputStream("/data/publicK.txt");
+			publicK = new FileOutputStream("./../data/publicK.txt");
 			oosPublicK =  new ObjectOutputStream(publicK);
 
 			oosPublicK.writeObject(new String (arregloBytesCifrado));
@@ -93,13 +97,7 @@ public class Main {
 			imprimir(arregloBytesDecifrado);
 			
 			System.out.println("texto decifrado: "+ new String(arregloBytesDecifrado) );
-		} catch (FileNotFoundException ex) {
-			System.out
-				.println(ex.getMessage() + " in the specified directory.");
-			System.exit(0);
-		} catch (IOException e) {
-			System.out.println(e.getMessage());
-		}
+
 	}
 
 	public static void imprimir(byte[] contenido) {
@@ -114,7 +112,7 @@ public class Main {
 	public static File crearArchivo(String contenidoArchivo)
 	{
 		try {
-			String ruta = "/ruta/archivo.txt";
+			String ruta = "./ruta/archivo.txt";
 			String contenido = contenidoArchivo;
 			File file = new File(ruta);
 			// Si el archivo no existe es creado

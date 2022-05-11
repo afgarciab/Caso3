@@ -12,7 +12,7 @@ import java.io.PrintWriter;
  */
 public class ProtocoloServidor {
 
-	public static void procesar(BufferedReader pIn, PrintWriter pOut) throws IOException{
+	public static void procesar(BufferedReader pIn, PrintWriter pOut, int idProceso) throws IOException{
 		// TODO Auto-generated method stub
 		String inputLine;
 		String outputLine;
@@ -23,9 +23,14 @@ public class ProtocoloServidor {
 
 		//procesa la entrada
 		outputLine=inputLine;
-		if(inputLine.equals("ok"))
-		{
-			outputLine="adios";
+		if(idProceso==0) {
+			if(inputLine.equals("INICIO"))
+			{
+				outputLine="ACK";
+			}
+			else {
+				outputLine="DESCONOCIDO";
+			}
 		}
 
 		//escribe en el flujo de salida

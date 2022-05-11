@@ -15,6 +15,7 @@ public class Cliente {
 		BufferedReader lector=null;
 		System.out.println("cliente..");
 		int cont=0;
+		boolean salir=false;
 
 		try {
 			//se crean el socket en el  lado del cliente
@@ -32,18 +33,28 @@ public class Cliente {
 		BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 		//ejecuto hasta que escriba adios
 
-		while(cont<3) {
+		while(cont<2&&salir==false) {
 			//se ejecuta el protocolo en el lado del cliente
-			ProtocoloCliente.procesar(stdIn,lector, escritor);
+
+			//primero verifica verifica para iniciar sesion
+			if (cont==0) {
+				String respuesta =ProtocoloCliente.procesar(stdIn,lector, escritor,cont);
+				if(respuesta.equals("DESCONOCIDO"))
+				{
+					salir=true;
+				}
+
+			}else if (cont==1) {
+				System.out.println("paso2");
+			}
 			cont++;
+
 		}
 		//se cierran los flujos y el socket
 		stdIn.close();
 		escritor.close();
 		lector.close();
 		socket.close();
-
-
 
 	}
 

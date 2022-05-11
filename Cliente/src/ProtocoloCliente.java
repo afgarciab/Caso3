@@ -4,7 +4,7 @@ import java.io.PrintWriter;
 
 public class ProtocoloCliente {
 
-	public static void procesar(BufferedReader stdIn, BufferedReader pIn, PrintWriter pOut) throws IOException {
+	public static String procesar(BufferedReader stdIn, BufferedReader pIn, PrintWriter pOut, int idProceso) throws IOException {
 
 		//lee el teclado
 		System.out.println("escriba el mensaje para enviar");
@@ -21,7 +21,7 @@ public class ProtocoloCliente {
 		{
 			System.out.println("Respuesta del servidor: "+ fromServer);
 		}
-
+		return fromServer;
 
 	}
 

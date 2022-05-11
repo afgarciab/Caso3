@@ -5,7 +5,11 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
+import java.security.PublicKey;
 import java.util.Scanner;
 
 import javax.crypto.KeyGenerator;
@@ -20,7 +24,7 @@ import javax.security.auth.callback.TextOutputCallback;
  * @author EQUIPO
  *
  */
-public class Main3 {
+public class Main {
 
 
 	private final static String ALGORITMO ="RSA";
@@ -49,38 +53,53 @@ public class Main3 {
 
 		imprimir(arregloBytes);
 		System.out.println("//////////////////////////////////////////////////////////");
-		KeyGenerator keygen = KeyGenerator.getInstance(ALGORITMO);
-		SecretKey secretKey = keygen.generateKey();
+		KeyPairGenerator generator = KeyPairGenerator.getInstance(ALGORITMO);
+		generator.initialize(1024);
+		KeyPair keyPair = generator.generateKeyPair();
+		PublicKey llavePublica = keyPair.getPublic();
+		PrivateKey llavePrivada = keyPair.getPrivate();
+		
 
 		//Genere una llave secreta y gu�rdela en un archivo
-		FileOutputStream archivo = new FileOutputStream("./data/ejemplo.txt");
-		ObjectOutputStream oos = new ObjectOutputStream(archivo);
+		try{
+			FileOutputStream publicK = new FileOutputStream("/data/publicK.txt");
+			ObjectOutputStream oosPublicK = new ObjectOutputStream(publicK);
 
-		oos.writeObject(secretKey);
-		oos.close();
+			FileOutputStream privateK = new FileOutputStream("/data/privateK.txt");
+			ObjectOutputStream oosPrivateK = new ObjectOutputStream(privateK);
 
+			oosPublicK.writeObject(llavePublica);
+			oosPublicK.close();
 
+			oosPrivateK.writeObject(llavePrivada);
+			oosPrivateK.close();
+			
+			/*-------------------------------------------------------------------------*/
 
+			byte[] arregloBytesCifrado= Asimetrico.cifrar(llavePublica, ALGORITMO, entradaTeclado);
+			imprimir(arregloBytesCifrado);
 
+			//Cifre un mensaje de entrada. Almacene el texto cifrado en un archivo.
+			publicK = new FileOutputStream("/data/publicK.txt");
+			oosPublicK =  new ObjectOutputStream(publicK);
 
-
-		byte[] arregloBytesCifrado= Asimetrico.cifrar(secretKey, entradaTeclado);
-		imprimir(arregloBytesCifrado);
-
-		//Cifre un mensaje de entrada. Almacene el texto cifrado en un archivo.
-		archivo = new FileOutputStream("./data/ejemplo.txt");
-		oos =  new ObjectOutputStream(archivo);
-
-		oos.writeObject(new String (arregloBytesCifrado));
-		oos.close();
-
-		System.out.println("//////////////////////////////////////////////////////////");
-		
-		
-		byte[] arregloBytesDeCifrado=Asimetrico.descifrar(secretKey, arregloBytesCifrado);
-		imprimir(arregloBytesDeCifrado);
-
-		System.out.println("texto decifrado: "+ new String(arregloBytesDeCifrado) );
+			oosPublicK.writeObject(new String (arregloBytesCifrado));
+			oosPublicK.close();
+			
+			System.out.println("//////////////////////////////////////////////////////////");
+			
+			
+			byte[] arregloBytesDecifrado=Asimetrico.descifrar(llavePrivada, ALGORITMO, arregloBytesCifrado);
+			imprimir(arregloBytesDecifrado);
+			
+			System.out.println("texto decifrado: "+ new String(arregloBytesDecifrado) );
+		} catch (FileNotFoundException ex) {
+			System.out
+				.println(ex.getMessage() + " in the specified directory.");
+			System.exit(0);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
 	}
 
 	public static void imprimir(byte[] contenido) {

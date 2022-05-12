@@ -28,6 +28,7 @@ public class ProtocoloServidor {
 		String outputLine;
 		SecretKey llaveSincronica;
 
+		String nombreCliente="";
 		//lee del flujo de entrada
 		inputLine= pIn.readLine();
 		System.out.println("Entrada a procesar: " + inputLine);
@@ -74,6 +75,22 @@ public class ProtocoloServidor {
 			pOut.println("ACK");
 			System.out.println("salida procesada: "+ outputLine);
 		}
+		else if(idProceso==3)
+		{
+			nombreCliente=inputLine;
+			if(buscarCliente(inputLine)) {
+				pOut.println("ACK");
+			}else {
+				pOut.println("ERROR");
+			}
+		}
+		else if(idProceso==4) {
+			if(buscarClienteConPaquete(nombreCliente,Integer.parseInt(inputLine)).equals("")==false) {
+				pOut.println(buscarClienteConPaquete(nombreCliente,Integer.parseInt(inputLine)));
+			}else {
+				pOut.println("ERROR");
+			}
+		}
 
 		//escribe en el flujo de salida
 
@@ -100,6 +117,40 @@ public class ProtocoloServidor {
 	}
 
 
+	
+	/**
+	 * retorna true o false si el cliente est� o no
+	 * @param nombreCliente
+	 * @param idPaquete
+	 * @return
+	 */
+	public static String buscarClienteConPaquete(String nombreCliente,int idPaquete)
+	{
+		for (int i =0;i<32;i++)
+		{
+			if((nombreCliente.equals(paquetes[i].getNombreUsuario())&&(idPaquete==paquetes[i].getIdPaquete()))) {
+				return paquetes[i].getEstadoPaquete();
+			}
+		}
+		return "";
+	}
+
+	/**
+	 * retorna true o false si el cliente est� o no
+	 * @param nombreCliente
+	 * @param idPaquete
+	 * @return
+	 */
+	public static boolean buscarCliente(String nombreCliente)
+	{
+		for (int i =0;i<32;i++)
+		{
+			if((nombreCliente.equals(paquetes[i].getNombreUsuario()))) {
+				return true;
+			}
+		}
+		return false;
+	}
 	
 	
 	
@@ -204,39 +255,7 @@ public class ProtocoloServidor {
 
 		}
 
-		/**
-		 * retorna true o false si el cliente est� o no
-		 * @param nombreCliente
-		 * @param idPaquete
-		 * @return
-		 */
-		public boolean buscarClienteConPaquete(String nombreCliente,int idPaquete)
-		{
-			for (int i =0;i<32;i++)
-			{
-				if((nombreCliente.equals(paquetes[i].getNombreUsuario())&&(idPaquete==paquetes[i].getIdPaquete()))) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		/**
-		 * retorna true o false si el cliente est� o no
-		 * @param nombreCliente
-		 * @param idPaquete
-		 * @return
-		 */
-		public boolean buscarCliente(String nombreCliente)
-		{
-			for (int i =0;i<32;i++)
-			{
-				if((nombreCliente.equals(paquetes[i].getNombreUsuario()))) {
-					return true;
-				}
-			}
-			return false;
-		}
+		
 
 	}
 

@@ -50,7 +50,7 @@ public class Cliente {
 			// se ejecuta el protocolo en el lado del cliente
 
 			String respuesta =ProtocoloCliente.procesar(stdIn, lector, escritor, cont, llavePublica );
-			if(respuesta.equals("DESCONOCIDO"))
+			if(respuesta.equals("DESCONOCIDO")||respuesta.equals("ERROR"))
 			{
 				salir=true;
 

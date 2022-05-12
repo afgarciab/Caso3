@@ -95,6 +95,30 @@ public class ProtocoloCliente {
 				System.out.println("Respuesta del servidor: "+ fromServer);
 			}
 		}
+		if(idProceso==3)
+		{
+			System.out.println("escriba su nombre");
+			String fromUser = stdIn.readLine();
+			
+			pOut.println(fromUser);
+			if((fromServer = pIn.readLine())!=null)
+			{
+				System.out.println("Respuesta del servidor: "+ fromServer);
+			}
+			
+		}
+		if(idProceso==4)
+		{
+			System.out.println("escriba id del paquete");
+			String fromUser = stdIn.readLine();
+			
+			pOut.println(fromUser);
+			if((fromServer = pIn.readLine())!=null)
+			{
+				System.out.println("Respuesta del servidor: "+ fromServer);
+			}
+			
+		}
 		return fromServer;
 
 

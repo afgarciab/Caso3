@@ -1,10 +1,14 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * 
@@ -16,17 +20,19 @@ import javax.crypto.Cipher;
  */
 public class ProtocoloServidor {
 
+	
+	
 	public static void procesar(PublicKey pLlavePublica, PrivateKey pLlavePrivada,BufferedReader pIn, PrintWriter pOut, int idProceso) throws IOException{
 		// TODO Auto-generated method stub
 		String inputLine;
 		String outputLine;
+		SecretKey llaveSincronica;
 
 		//lee del flujo de entrada
 		inputLine= pIn.readLine();
 		System.out.println("Entrada a procesar: " + inputLine);
 
-		//procesa la entrada
-		outputLine=inputLine;
+		
 		//El cliente pide iniciar la sesión y espera un mensaje de confirmación del servidor (¨ACK¨)
 		if(idProceso==0) {
 			if(inputLine.equals("INICIO"))
@@ -43,7 +49,10 @@ public class ProtocoloServidor {
 		else if(idProceso==1)
 		{
 			//cifro con la llave privada
-			byte[] arregloCifrado= Asimetrico.cifrarPrivada(pLlavePrivada, "RSA", inputLine);
+			String entrada = inputLine;
+			byte[] arregloCifrado= Asimetrico.cifrarPublica(pLlavePublica, "RSA", entrada);
+			byte[] respuesta= Asimetrico.descifrarPrivada(pLlavePrivada, "RSA", arregloCifrado);
+			System.out.println(byte2str(respuesta));
 			//lo convierto en string
 			outputLine= byte2str(arregloCifrado);
 			pOut.println(outputLine);
@@ -51,8 +60,16 @@ public class ProtocoloServidor {
 		}
 		else if(idProceso==2)
 		{
-			outputLine= "ok";
-			pOut.println("ok");
+			//sacado de https://stackoverflow.com/questions/5355466/converting-secret-key-into-a-string-and-vice-versa
+			//decibra con la privada la llave simetrica
+			byte[] decodedKey = Base64.getDecoder().decode(inputLine);
+			byte[] llave =Asimetrico.descifrarPrivada(pLlavePrivada, "RSA",decodedKey );
+			SecretKey originalKey = new SecretKeySpec(decodedKey, 0, llave.length, "AES");
+			
+			llaveSincronica= originalKey;
+			
+			outputLine= "ACK";
+			pOut.println("ACK");
 			System.out.println("salida procesada: "+ outputLine);
 		}
 
@@ -90,7 +107,7 @@ public class ProtocoloServidor {
 			byte[] textoCifrado;
 			try {
 				Cipher cifrador = Cipher.getInstance(algoritmo);
-				byte[] textoClaro = texto.getBytes();
+				byte[] textoClaro = texto.getBytes(StandardCharsets.UTF_8);
 				cifrador.init(Cipher.ENCRYPT_MODE, llave);
 				textoCifrado = cifrador.doFinal(textoClaro);
 				long tiempoFinal = System.nanoTime();
@@ -123,7 +140,7 @@ public class ProtocoloServidor {
 			byte[] textoCifrado;
 			try {
 				Cipher cifrador = Cipher.getInstance(algoritmo);
-				byte[] textoClaro = texto.getBytes();
+				byte[] textoClaro = texto.getBytes(StandardCharsets.UTF_8);
 				cifrador.init(Cipher.ENCRYPT_MODE, llave);
 				textoCifrado = cifrador.doFinal(textoClaro);
 				long tiempoFinal = System.nanoTime();

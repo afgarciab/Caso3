@@ -90,9 +90,9 @@ public class Servidor {
 				ObjectOutputStream oosPublicK = new ObjectOutputStream(publicK);
 				oosPublicK.writeObject(llavePublica);
 				oosPublicK.close();
-			}else {
-				llavePublica = getPublicKey("./data/publicK.txt");
 			}
+				llavePublica = getPublicKey("./data/publicK.txt");
+			
 			
 			
 			File privateKFile = new File("./data/privateK.txt");
@@ -104,9 +104,9 @@ public class Servidor {
 				
 				oosPrivateK.writeObject(llavePrivada);
 				oosPrivateK.close();
-			}else {
-				llavePrivada= getPrivateKey("./data/privateK.txt");
 			}
+				llavePrivada= getPrivateKey("./data/privateK.txt");
+			
 			
 			System.out.println(llavePublica);
 

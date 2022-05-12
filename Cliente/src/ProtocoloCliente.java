@@ -4,6 +4,7 @@ import java.io.PrintWriter;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
@@ -17,7 +18,7 @@ public class ProtocoloCliente {
 
 
 
-	public static String procesar(BufferedReader stdIn, BufferedReader pIn, PrintWriter pOut, int idProceso, PublicKey llavePublicaServidor) throws IOException {
+	public static String procesar(BufferedReader stdIn, BufferedReader pIn, PrintWriter pOut, int idProceso, PublicKey llavePublicaServidor) throws IOException, NoSuchAlgorithmException {
 		String fromServer="";
 
 		long random;
@@ -48,7 +49,7 @@ public class ProtocoloCliente {
 			//envia por red
 			random=generarNum();
 			System.out.println("el numero es: " +random);
-			pOut.println(random);
+			pOut.println(Long.toString(random));
 
 
 			//lee lo que llega por red
@@ -57,11 +58,12 @@ public class ProtocoloCliente {
 			if((fromServer = pIn.readLine())!=null)
 			{
 				//verificar que el reto sea el correcto.
+				System.out.println(fromServer);
 				byte[] resultado= Asimetrico.descifrarPublica(llavePublicaServidor, "RSA" , str2byte(fromServer));
 				System.out.println("Respuesta del servidor: "+ byte2str(resultado));
 			}
 		}
-		//aqui tengo que SEGUIR CON EL PROTOCOLO
+		//aqui tengo que generar llave sincronica
 		
 		if(idProceso==2)
 		{
@@ -69,6 +71,14 @@ public class ProtocoloCliente {
 			System.out.println("oprima Enter");
 			String fromUser = stdIn.readLine();
 
+			KeyGenerator keygen = KeyGenerator.getInstance("AES");
+			SecretKey secretKey = keygen.generateKey();
+			
+			//sacado de https://self-learning-java-tutorial.blogspot.com/2015/07/convert-string-to-secret-key-in-java.html
+			byte[] encoded = secretKey.getEncoded();
+			String encodedKey = Base64.getEncoder().encodeToString(encoded);
+			
+			byte[] resultado= Asimetrico.cifrarPublica(llavePublicaServidor, "RSA" , encodedKey);
 			//envia por red
 			pOut.println();
 
@@ -80,8 +90,6 @@ public class ProtocoloCliente {
 			{
 				
 				System.out.println("sera null? "+fromServer);
-				
-				
 
 				System.out.println("Respuesta del servidor: "+ fromServer);
 			}

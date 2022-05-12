@@ -3,10 +3,12 @@
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.ProtocolException;
@@ -28,11 +30,15 @@ public class Servidor {
 
 
 	private Paquetes[] paquetes;
+	
+	private static PublicKey llavePublica;
+	
+	private static PrivateKey llavePrivada;
 
 
 	public static final int PUERTO = 3400;
 
-	public static void main(String[] args) throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
+	public static void main(String[] args) throws Exception {
 
 		int numeroThreads=0;
 		ServerSocket ss=null;
@@ -40,11 +46,9 @@ public class Servidor {
 
 		System.out.println("Main server...");
 
-		PublicKey llavePublica = null;
-		PrivateKey llavePrivada = null;
 		final String ALGORITMO = "RSA";
 
-		getLlavesAsimetricas(llavePublica, llavePrivada, ALGORITMO);
+		getLlavesAsimetricas( ALGORITMO);
 
 		try {
 			ss= new ServerSocket(PUERTO);
@@ -68,7 +72,7 @@ public class Servidor {
 		ss.close();
 	}
 
-	public static void getLlavesAsimetricas(PublicKey llavePublica, PrivateKey llavePrivada, String ALGORITMO) {
+	public static void getLlavesAsimetricas( String ALGORITMO) throws Exception {
 
 		try {
 
@@ -86,7 +90,10 @@ public class Servidor {
 				ObjectOutputStream oosPublicK = new ObjectOutputStream(publicK);
 				oosPublicK.writeObject(llavePublica);
 				oosPublicK.close();
+			}else {
+				llavePublica = getPublicKey("./data/publicK.txt");
 			}
+			
 			
 			File privateKFile = new File("./data/privateK.txt");
 			// Si el archivo no existe es creado
@@ -95,12 +102,13 @@ public class Servidor {
 				FileOutputStream privateK = new FileOutputStream(privateKFile, false);
 				ObjectOutputStream oosPrivateK = new ObjectOutputStream(privateK);
 				
-
 				oosPrivateK.writeObject(llavePrivada);
 				oosPrivateK.close();
+			}else {
+				llavePrivada= getPrivateKey("./data/privateK.txt");
 			}
 			
-
+			System.out.println(llavePublica);
 
 		} catch (FileNotFoundException ex) {
 			System.out.println(ex.getMessage() + " in the specified directory.");
@@ -180,42 +188,28 @@ public class Servidor {
 		}
 		return false;
 	}
+	
+	public static PublicKey getPublicKey(String filename) throws Exception {
+		PublicKey llave = null;	
+		FileInputStream	file = new FileInputStream(filename);
+		ObjectInputStream ois = new ObjectInputStream(file);
+
+		llave = (PublicKey) ois.readObject();
+		ois.close();
+		return llave;
+	}
+	
+	public static PrivateKey getPrivateKey(String filename) throws Exception {
+		PrivateKey llave = null;	
+		FileInputStream	file = new FileInputStream(filename);
+		ObjectInputStream ois = new ObjectInputStream(file);
+
+		llave = (PrivateKey) ois.readObject();
+		ois.close();
+		return llave;
+	}
 
 
 
 }
 
-class Asimetrico {
-	public static byte[] cifrar(PublicKey llave, String algoritmo, String texto) {
-		long tiempoInicial = System.nanoTime();
-		byte[] textoCifrado;
-		try {
-			Cipher cifrador = Cipher.getInstance(algoritmo);
-			byte[] textoClaro = texto.getBytes();
-			cifrador.init(Cipher.ENCRYPT_MODE, llave);
-			textoCifrado = cifrador.doFinal(textoClaro);
-			long tiempoFinal = System.nanoTime();
-			System.out.println(tiempoFinal-tiempoInicial);
-			return textoCifrado;
-		} catch (Exception e) {
-			System.out.println("Excepcion: "  + e.getMessage());
-			return null;
-		}
-	}
-
-	public static byte [] descifrar(PrivateKey llave, String algoritmo, byte[] texto) {
-		long tiempoInicial = System.nanoTime();
-		byte[] textoClaro;
-		try {
-			Cipher cifrador = Cipher.getInstance(algoritmo);
-			cifrador.init(Cipher.DECRYPT_MODE, llave);
-			textoClaro = cifrador.doFinal(texto);
-		} catch (Exception e) {
-			System.out.println("Excepcion: " + e.getMessage());
-			return null;
-		}
-		long tiempoFinal = System.nanoTime();
-		System.out.println(tiempoFinal-tiempoInicial);
-		return textoClaro;
-	}
-}

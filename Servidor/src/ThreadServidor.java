@@ -33,12 +33,12 @@ public class ThreadServidor extends Thread {
 			//se ejecuta el protocolo en el lado del servidor
 			//se ejecuta hasta que escriba ok
 			int cont=0;
-			while(cont<2) {
+			while(cont<3) {
 				if(cont==0)
 				{
 					
 				}
-				ProtocoloServidor.procesar(lector, escritor,cont);
+				ProtocoloServidor.procesar(llavePublica,LlavePrivada,lector, escritor,cont);
 				cont++;
 			}
 

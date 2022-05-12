@@ -108,7 +108,7 @@ public class Servidor {
 				llavePrivada= getPrivateKey("./data/privateK.txt");
 			}
 			
-			System.out.println(llavePublica);
+			//System.out.println(llavePublica);
 
 		} catch (FileNotFoundException ex) {
 			System.out.println(ex.getMessage() + " in the specified directory.");

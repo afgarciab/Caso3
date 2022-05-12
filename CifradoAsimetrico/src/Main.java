@@ -82,34 +82,46 @@ public class Main {
 			oosPrivateK.close();
 
 			/*-------------------------------------------------------------------------*/
-			PrivateKey llave = null;
+			PrivateKey llavepriv = null;
 
 			FileInputStream privateK2 = new FileInputStream("./data/privateK.txt");
-			ObjectInputStream oisPublicK = new ObjectInputStream(privateK2);
+			ObjectInputStream oisPrivateK = new ObjectInputStream(privateK2);
 			try {
-				llave = (PrivateKey) oisPublicK.readObject();
+				llavepriv = (PrivateKey) oisPrivateK.readObject();
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 
 			
 
-			byte[] arregloBytesCifrado = Asimetrico.cifrar(llave, ALGORITMO, entradaTeclado);
+			byte[] arregloBytesCifrado = Asimetrico.cifrar(llavepriv, ALGORITMO, entradaTeclado);
 			imprimir(arregloBytesCifrado);
 
 			
 
 			// Cifre un mensaje de entrada. Almacene el texto cifrado en un archivo.
-			publicK = new FileOutputStream("./data/publicK.txt");
-			oosPublicK = new ObjectOutputStream(publicK);
+			privateK = new FileOutputStream("./data/privateK.txt");
+			oosPrivateK = new ObjectOutputStream(privateK);
 
-			oosPublicK.writeObject(new String(arregloBytesCifrado));
-			oosPublicK.close();
+			oosPrivateK.writeObject(new String(arregloBytesCifrado));
+			oosPrivateK.close();
 
 			System.out.println("//////////////////////////////////////////////////////////");
 
-			byte[] arregloBytesDecifrado = Asimetrico.descifrar(llavePublica, ALGORITMO, arregloBytesCifrado);
+			PublicKey llavepub = null;
+
+			FileInputStream publicK2 = new FileInputStream("./data/publicK.txt");
+			ObjectInputStream oisPublicK = new ObjectInputStream(publicK2);
+			try {
+				llavepub = (PublicKey) oisPublicK.readObject();
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+
+			byte[] arregloBytesDecifrado = Asimetrico.descifrar(llavepub, ALGORITMO, arregloBytesCifrado);
 			imprimir(arregloBytesDecifrado);
+
+			
 
 			System.out.println("texto decifrado: " + new String(arregloBytesDecifrado));
 		} catch (FileNotFoundException ex) {

@@ -13,13 +13,13 @@ public class ThreadServidor extends Thread {
 	
 	private PublicKey llavePublica;
 	
-	private PrivateKey LlavePrivada;
+	private PrivateKey llavePrivada;
 
 	public ThreadServidor(PublicKey pLlavePublica, PrivateKey pLlavePrivada, Socket socket, int numeroThreads) {
 		this.socket = socket;
 		this.numeroThreads = numeroThreads;
 		llavePublica=pLlavePublica;
-		LlavePrivada=pLlavePrivada;
+		llavePrivada=pLlavePrivada;
 	}
 
 	public void run()
@@ -38,7 +38,7 @@ public class ThreadServidor extends Thread {
 				{
 					
 				}
-				ProtocoloServidor.procesar(llavePublica,LlavePrivada,lector, escritor,cont);
+				ProtocoloServidor.procesar(llavePublica,llavePrivada,lector, escritor,cont);
 				cont++;
 			}
 

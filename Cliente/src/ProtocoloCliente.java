@@ -55,10 +55,10 @@ public class ProtocoloCliente {
 			//si lo que llega del servidor no es null
 			//observe la asignacion luego la condicion
 			if((fromServer = pIn.readLine())!=null)
-			{
+			{	
 				//verificar que el reto sea el correcto.
 				byte[] resultado= Asimetrico.descifrarPublica(llavePublicaServidor, "RSA" , str2byte(fromServer));
-				System.out.println("Respuesta del servidor: "+ byte2str(resultado));
+				System.out.println("Respuesta del servidor: "+ new String(resultado));
 			}
 		}
 		//aqui tengo que SEGUIR CON EL PROTOCOLO
@@ -235,7 +235,7 @@ public class ProtocoloCliente {
 				Cipher cifrador = Cipher.getInstance(algoritmo);
 				cifrador.init(Cipher.DECRYPT_MODE, llave);
 				textoClaro = cifrador.doFinal(texto);
-			} catch (Exception e) {
+			 } catch (Exception e) {
 				System.out.println("Excepcion: " + e.getMessage());
 				return null;
 			}

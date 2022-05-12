@@ -27,7 +27,7 @@ public class ProtocoloServidor {
 
 		//procesa la entrada
 		outputLine=inputLine;
-		//El cliente pide iniciar la sesión y espera un mensaje de confirmación del servidor (¨ACK¨)
+		//El cliente pide iniciar la sesiï¿½n y espera un mensaje de confirmaciï¿½n del servidor (ï¿½ACKï¿½)
 		if(idProceso==0) {
 			if(inputLine.equals("INICIO"))
 			{
@@ -127,9 +127,9 @@ public class ProtocoloServidor {
 				cifrador.init(Cipher.ENCRYPT_MODE, llave);
 				textoCifrado = cifrador.doFinal(textoClaro);
 				long tiempoFinal = System.nanoTime();
-				System.out.println("el tiempo es: "+(tiempoFinal-tiempoInicial));
+				System.out.println(tiempoFinal-tiempoInicial);
 				return textoCifrado;
-			} catch (Exception e) {
+			 } catch (Exception e) {
 				System.out.println("Excepcion: "  + e.getMessage());
 				return null;
 			}

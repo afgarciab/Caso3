@@ -34,7 +34,7 @@ public class Cliente {
 			lector = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			//leemos la llave publica
 			llavePublica = getPublicKey("./data/publicK.txt");
-			System.out.println(llavePublica);
+			//System.out.println(llavePublica);
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(-1);
@@ -49,7 +49,7 @@ public class Cliente {
 		while (cont < 3 && salir == false) {
 			// se ejecuta el protocolo en el lado del cliente
 
-			String respuesta =ProtocoloCliente.procesar(stdIn,lector, escritor,cont, llavePublica );
+			String respuesta =ProtocoloCliente.procesar(stdIn, lector, escritor, cont, llavePublica );
 			if(respuesta.equals("DESCONOCIDO"))
 			{
 				salir=true;

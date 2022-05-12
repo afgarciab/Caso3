@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
@@ -64,22 +65,22 @@ public class ProtocoloCliente {
 			}
 		}
 		//aqui tengo que generar llave sincronica
-		
+
 		if(idProceso==2)
 		{
 			//lee el teclado
 			System.out.println("oprima Enter");
 			String fromUser = stdIn.readLine();
-			
-			
+
+
 			KeyGenerator keygen = KeyGenerator.getInstance("AES");
 			SecretKey secretKey = keygen.generateKey();
-			
+
 			//sacado de https://self-learning-java-tutorial.blogspot.com/2015/07/convert-string-to-secret-key-in-java.html
 			byte[] encoded = secretKey.getEncoded();
 			String encodedKey = Base64.getEncoder().encodeToString(encoded);
-		
-			
+
+
 			byte[] resultado= Asimetrico.cifrarPublica(llavePublicaServidor, "RSA" , encodedKey);
 			System.out.println(secretKey);
 			//envia por red
@@ -99,25 +100,42 @@ public class ProtocoloCliente {
 		{
 			System.out.println("escriba su nombre");
 			String fromUser = stdIn.readLine();
-			
+
 			pOut.println(fromUser);
 			if((fromServer = pIn.readLine())!=null)
 			{
 				System.out.println("Respuesta del servidor: "+ fromServer);
 			}
-			
+
 		}
 		if(idProceso==4)
 		{
 			System.out.println("escriba id del paquete");
 			String fromUser = stdIn.readLine();
-			
+
 			pOut.println(fromUser);
 			if((fromServer = pIn.readLine())!=null)
 			{
 				System.out.println("Respuesta del servidor: "+ fromServer);
 			}
-			
+		}
+		if(idProceso==5)
+		{
+			System.out.println("enter");
+			String fromUser = stdIn.readLine();
+
+			pOut.println("ACK");
+			if((fromServer = pIn.readLine())!=null)
+			{
+				byte[] rta= Digest.getDigest("SHA-256", str2byte("resumen"));
+				if(Digest.verificar(rta, str2byte(fromServer)))
+				{
+					System.out.println("Respuesta del servidor: "+ Digest.imprimirHexa(rta));
+				}
+				else {
+					System.out.println("ERROR");
+				}
+			}
 		}
 		return fromServer;
 
@@ -136,12 +154,12 @@ public class ProtocoloCliente {
 			keygen = KeyGenerator.getInstance(ALGORITMO);
 			llaveSimetrica = keygen.generateKey();
 		} catch (NoSuchAlgorithmException e) {
-			
+
 			e.printStackTrace();
 		}
 
 	}
-	
+
 	public static String byte2str( byte[] b )
 	{
 		// Encapsulamiento con hexadecimales
@@ -268,13 +286,53 @@ public class ProtocoloCliente {
 				Cipher cifrador = Cipher.getInstance(algoritmo);
 				cifrador.init(Cipher.DECRYPT_MODE, llave);
 				textoClaro = cifrador.doFinal(texto);
-			 } catch (Exception e) {
+			} catch (Exception e) {
 				System.out.println("Excepcion: " + e.getMessage());
 				return null;
 			}
 			long tiempoFinal = System.nanoTime();
 			System.out.println(tiempoFinal-tiempoInicial);
 			return textoClaro;
+		}
+
+	}
+
+	public static class Digest {
+
+
+		public static byte[] getDigest(String algorithm,byte[] buffer)
+		{
+			try {
+				MessageDigest digest = MessageDigest.getInstance(algorithm);
+				digest.update(buffer);
+				return digest.digest();
+			}catch (Exception e) {
+				return null;
+			}
+		}
+
+		public static String imprimirHexa(byte[] byteArray) {
+			String out="";
+			for(int i=0; i<byteArray.length;i++)
+			{
+				if((byteArray[i]&0xff)<=0xf) {
+					out+="0";
+				}
+				out+=Integer.toHexString(byteArray[i]&0xff).toLowerCase();
+			}
+			return out;
+		}
+
+		public static boolean verificar(byte[] hasheado, byte[]original)
+		{
+			for (int i=0; i<hasheado.length;i++)
+			{
+				if(Byte.compare(hasheado[i], original[i])!=0)
+				{
+					return false;
+				}
+			}
+			return true;
 		}
 
 	}

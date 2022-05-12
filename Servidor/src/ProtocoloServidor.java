@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Base64;
@@ -90,6 +91,9 @@ public class ProtocoloServidor {
 			}else {
 				pOut.println("ERROR");
 			}
+		}else if(idProceso==5) {
+			byte[] digestSHA= Digest.getDigest("SHA-256", str2byte("resumen"));
+			pOut.println(byte2str(digestSHA));	
 		}
 
 		//escribe en el flujo de salida
@@ -256,6 +260,45 @@ public class ProtocoloServidor {
 		}
 
 		
+
+	}
+	public static class Digest {
+
+		
+		public static byte[] getDigest(String algorithm,byte[] buffer)
+		{
+			try {
+				MessageDigest digest = MessageDigest.getInstance(algorithm);
+				digest.update(buffer);
+				return digest.digest();
+			}catch (Exception e) {
+				return null;
+			}
+		}
+		
+		public static String imprimirHexa(byte[] byteArray) {
+			String out="";
+			for(int i=0; i<byteArray.length;i++)
+			{
+				if((byteArray[i]&0xff)<=0xf) {
+					out+="0";
+				}
+				out+=Integer.toHexString(byteArray[i]&0xff).toLowerCase();
+			}
+			return out;
+		}
+		
+		public static boolean verificar(byte[] hasheado, byte[]original)
+		{
+			for (int i=0; i<hasheado.length;i++)
+			{
+				if(Byte.compare(hasheado[i], original[i])!=0)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
 
 	}
 

@@ -14,7 +14,7 @@ import javax.crypto.SecretKey;
  *
  */
 public class Asimetrico {
-	public static byte[] cifrar(PublicKey llave, String algoritmo, String texto) {
+	public static byte[] cifrar(PrivateKey llave, String algoritmo, String texto) {
 	    long tiempoInicial = System.nanoTime();
 		byte[] textoCifrado;
 	    try {
@@ -31,7 +31,7 @@ public class Asimetrico {
 	    }
 	}
 	
-	public static byte [] descifrar(PrivateKey llave, String algoritmo, byte[] texto) {
+	public static byte [] descifrar(PublicKey llave, String algoritmo, byte[] texto) {
 	    long tiempoInicial = System.nanoTime();
 		byte[] textoClaro;
 	    try {

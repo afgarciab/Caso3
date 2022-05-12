@@ -56,11 +56,11 @@ public class ProtocoloCliente {
 			//si lo que llega del servidor no es null
 			//observe la asignacion luego la condicion
 			if((fromServer = pIn.readLine())!=null)
-			{
+			{	
 				//verificar que el reto sea el correcto.
 				System.out.println(fromServer);
 				byte[] resultado= Asimetrico.descifrarPublica(llavePublicaServidor, "RSA" , str2byte(fromServer));
-				System.out.println("Respuesta del servidor: "+ byte2str(resultado));
+				System.out.println("Respuesta del servidor: "+ new String(resultado));
 			}
 		}
 		//aqui tengo que generar llave sincronica
@@ -70,17 +70,20 @@ public class ProtocoloCliente {
 			//lee el teclado
 			System.out.println("oprima Enter");
 			String fromUser = stdIn.readLine();
-
+			
+			
 			KeyGenerator keygen = KeyGenerator.getInstance("AES");
 			SecretKey secretKey = keygen.generateKey();
 			
 			//sacado de https://self-learning-java-tutorial.blogspot.com/2015/07/convert-string-to-secret-key-in-java.html
 			byte[] encoded = secretKey.getEncoded();
 			String encodedKey = Base64.getEncoder().encodeToString(encoded);
+		
 			
 			byte[] resultado= Asimetrico.cifrarPublica(llavePublicaServidor, "RSA" , encodedKey);
+			System.out.println(secretKey);
 			//envia por red
-			pOut.println();
+			pOut.println(byte2str(resultado));
 
 
 			//lee lo que llega por red
@@ -88,8 +91,6 @@ public class ProtocoloCliente {
 			//observe la asignacion luego la condicion
 			if((fromServer = pIn.readLine())!=null)
 			{
-				
-				System.out.println("sera null? "+fromServer);
 
 				System.out.println("Respuesta del servidor: "+ fromServer);
 			}
@@ -243,7 +244,7 @@ public class ProtocoloCliente {
 				Cipher cifrador = Cipher.getInstance(algoritmo);
 				cifrador.init(Cipher.DECRYPT_MODE, llave);
 				textoClaro = cifrador.doFinal(texto);
-			} catch (Exception e) {
+			 } catch (Exception e) {
 				System.out.println("Excepcion: " + e.getMessage());
 				return null;
 			}

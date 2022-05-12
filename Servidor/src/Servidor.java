@@ -29,7 +29,7 @@ import javax.crypto.*;
 public class Servidor {
 
 
-	private Paquetes[] paquetes;
+
 	
 	private static PublicKey llavePublica;
 	
@@ -108,7 +108,7 @@ public class Servidor {
 				llavePrivada= getPrivateKey("./data/privateK.txt");
 			
 			
-			System.out.println(llavePublica);
+			//System.out.println(llavePublica);
 
 		} catch (FileNotFoundException ex) {
 			System.out.println(ex.getMessage() + " in the specified directory.");
@@ -120,74 +120,7 @@ public class Servidor {
 		}
 	}
 
-	public void GenerarPaquetesBase()
-	{
-		paquetes=new Paquetes[31];
-		int i =0;
-		for (;i<5;i++)
-		{
-			paquetes[i]=new Paquetes("a", i, "PKT_EN_OFICINA");
-		}
-		for (;i<10;i++)
-		{
-			paquetes[i]=new Paquetes("b", i, "PKT_RECOGIDO");
-		}
-		for (;i<15;i++)
-		{
-			paquetes[i]=new Paquetes("c", i, "PKT_EN_CLASIFICACION");
-		}
-		for (;i<20;i++)
-		{
-			paquetes[i]=new Paquetes("d", i, "PKT_DESPACHADO");
-		}
-		for (;i<25;i++)
-		{
-			paquetes[i]=new Paquetes("a", i, "PKT_EN_ENTREGA");
-		}
-		for (;i<30;i++)
-		{
-			paquetes[i]=new Paquetes("b", i, "PKT_ENTREGADO");
-		}
-		for (;i<32;i++)
-		{
-			paquetes[i]=new Paquetes("c", i, "PKT_DESCONOCIDO");
-		}
-
-	}
-
-	/**
-	 * retorna true o false si el cliente est� o no
-	 * @param nombreCliente
-	 * @param idPaquete
-	 * @return
-	 */
-	public boolean buscarClienteConPaquete(String nombreCliente,int idPaquete)
-	{
-		for (int i =0;i<32;i++)
-		{
-			if((nombreCliente.equals(paquetes[i].getNombreUsuario())&&(idPaquete==paquetes[i].getIdPaquete()))) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * retorna true o false si el cliente est� o no
-	 * @param nombreCliente
-	 * @param idPaquete
-	 * @return
-	 */
-	public boolean buscarCliente(String nombreCliente)
-	{
-		for (int i =0;i<32;i++)
-		{
-			if((nombreCliente.equals(paquetes[i].getNombreUsuario()))) {
-				return true;
-			}
-		}
-		return false;
-	}
+	
 	
 	public static PublicKey getPublicKey(String filename) throws Exception {
 		PublicKey llave = null;	

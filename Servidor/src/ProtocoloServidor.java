@@ -20,7 +20,7 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class ProtocoloServidor {
 
-	
+	private static Paquetes[] paquetes;
 	
 	public static void procesar(PublicKey pLlavePublica, PrivateKey pLlavePrivada,BufferedReader pIn, PrintWriter pOut, int idProceso) throws IOException{
 		// TODO Auto-generated method stub
@@ -32,8 +32,14 @@ public class ProtocoloServidor {
 		inputLine= pIn.readLine();
 		System.out.println("Entrada a procesar: " + inputLine);
 
+
 		
 		//El cliente pide iniciar la sesión y espera un mensaje de confirmación del servidor (¨ACK¨)
+
+		//procesa la entrada
+		outputLine=inputLine;
+		//El cliente pide iniciar la sesiï¿½n y espera un mensaje de confirmaciï¿½n del servidor (ï¿½ACKï¿½)
+
 		if(idProceso==0) {
 			if(inputLine.equals("INICIO"))
 			{
@@ -49,25 +55,21 @@ public class ProtocoloServidor {
 		else if(idProceso==1)
 		{
 			//cifro con la llave privada
-			String entrada = inputLine;
-			byte[] arregloCifrado= Asimetrico.cifrarPublica(pLlavePublica, "RSA", entrada);
-			byte[] respuesta= Asimetrico.descifrarPrivada(pLlavePrivada, "RSA", arregloCifrado);
-			System.out.println(byte2str(respuesta));
+			byte[] arregloCifrado= Asimetrico.cifrarPrivada(pLlavePrivada, "RSA", inputLine);
 			//lo convierto en string
 			outputLine= byte2str(arregloCifrado);
 			pOut.println(outputLine);
-			System.out.println("salida procesada: "+ outputLine);
+			System.out.println("salida procesada: "+ new String(outputLine));
 		}
 		else if(idProceso==2)
 		{
 			//sacado de https://stackoverflow.com/questions/5355466/converting-secret-key-into-a-string-and-vice-versa
 			//decibra con la privada la llave simetrica
-			byte[] decodedKey = Base64.getDecoder().decode(inputLine);
-			byte[] llave =Asimetrico.descifrarPrivada(pLlavePrivada, "RSA",decodedKey );
+			
+			byte[] llave =Asimetrico.descifrarPrivada(pLlavePrivada, "RSA", str2byte(inputLine) );
+			byte[] decodedKey = Base64.getDecoder().decode(byte2str(llave));
 			SecretKey originalKey = new SecretKeySpec(decodedKey, 0, llave.length, "AES");
-			
 			llaveSincronica= originalKey;
-			
 			outputLine= "ACK";
 			pOut.println("ACK");
 			System.out.println("salida procesada: "+ outputLine);
@@ -144,9 +146,9 @@ public class ProtocoloServidor {
 				cifrador.init(Cipher.ENCRYPT_MODE, llave);
 				textoCifrado = cifrador.doFinal(textoClaro);
 				long tiempoFinal = System.nanoTime();
-				System.out.println("el tiempo es: "+(tiempoFinal-tiempoInicial));
+				System.out.println(tiempoFinal-tiempoInicial);
 				return textoCifrado;
-			} catch (Exception e) {
+			 } catch (Exception e) {
 				System.out.println("Excepcion: "  + e.getMessage());
 				return null;
 			}
@@ -165,6 +167,75 @@ public class ProtocoloServidor {
 			long tiempoFinal = System.nanoTime();
 			System.out.println(tiempoFinal-tiempoInicial);
 			return textoClaro;
+		}
+		
+		public static void GenerarPaquetesBase()
+		{
+			paquetes=new Paquetes[31];
+			int i =0;
+			for (;i<5;i++)
+			{
+				paquetes[i]=new Paquetes("a", i, "PKT_EN_OFICINA");
+			}
+			for (;i<10;i++)
+			{
+				paquetes[i]=new Paquetes("b", i, "PKT_RECOGIDO");
+			}
+			for (;i<15;i++)
+			{
+				paquetes[i]=new Paquetes("c", i, "PKT_EN_CLASIFICACION");
+			}
+			for (;i<20;i++)
+			{
+				paquetes[i]=new Paquetes("d", i, "PKT_DESPACHADO");
+			}
+			for (;i<25;i++)
+			{
+				paquetes[i]=new Paquetes("a", i, "PKT_EN_ENTREGA");
+			}
+			for (;i<30;i++)
+			{
+				paquetes[i]=new Paquetes("b", i, "PKT_ENTREGADO");
+			}
+			for (;i<32;i++)
+			{
+				paquetes[i]=new Paquetes("c", i, "PKT_DESCONOCIDO");
+			}
+
+		}
+
+		/**
+		 * retorna true o false si el cliente estï¿½ o no
+		 * @param nombreCliente
+		 * @param idPaquete
+		 * @return
+		 */
+		public boolean buscarClienteConPaquete(String nombreCliente,int idPaquete)
+		{
+			for (int i =0;i<32;i++)
+			{
+				if((nombreCliente.equals(paquetes[i].getNombreUsuario())&&(idPaquete==paquetes[i].getIdPaquete()))) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		/**
+		 * retorna true o false si el cliente estï¿½ o no
+		 * @param nombreCliente
+		 * @param idPaquete
+		 * @return
+		 */
+		public boolean buscarCliente(String nombreCliente)
+		{
+			for (int i =0;i<32;i++)
+			{
+				if((nombreCliente.equals(paquetes[i].getNombreUsuario()))) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 	}

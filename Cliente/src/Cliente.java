@@ -46,7 +46,7 @@ public class Cliente {
 		BufferedReader stdIn = new BufferedReader(new InputStreamReader(System.in));
 		// ejecuto hasta que escriba adios
 
-		while (cont < 3 && salir == false) {
+		while (cont < 6 && salir == false) {
 			// se ejecuta el protocolo en el lado del cliente
 
 			String respuesta =ProtocoloCliente.procesar(stdIn, lector, escritor, cont, llavePublica );

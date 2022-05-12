@@ -21,7 +21,7 @@ import javax.crypto.spec.SecretKeySpec;
  */
 public class ProtocoloServidor {
 
-	private static Paquetes[] paquetes;
+	private static Paquetes[] paquetes = {new Paquetes("usrX", 0, "PKT_EN_OFICINA")};
 	
 	public static void procesar(PublicKey pLlavePublica, PrivateKey pLlavePrivada,BufferedReader pIn, PrintWriter pOut, int idProceso) throws IOException{
 		// TODO Auto-generated method stub
@@ -36,7 +36,7 @@ public class ProtocoloServidor {
 
 
 		
-		//El cliente pide iniciar la sesión y espera un mensaje de confirmación del servidor (¨ACK¨)
+		//El cliente pide iniciar la sesiï¿½n y espera un mensaje de confirmaciï¿½n del servidor (ï¿½ACKï¿½)
 
 		//procesa la entrada
 		outputLine=inputLine;
